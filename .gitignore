@@ -128,7 +128,8 @@ dmypy.json
 
 # Configuration
 config.yml
-config/
+input/
+output/
 
 # Black
 *.bak

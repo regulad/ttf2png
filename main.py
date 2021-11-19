@@ -1,16 +1,33 @@
-# This is a sample Python script.
+import os
+from typing import List
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
-
-
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+from fontforge import *
 
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+input_folder: str = os.path.join(os.getcwd(), "input\\")  # Path to input & output relative to the current working directory
+output_folder: str = os.path.join(os.getcwd(), "output\\")
+
+if not os.path.exists(input_folder):
+    os.mkdir(input_folder)
+
+if not os.path.exists(output_folder):
+    os.mkdir(output_folder)
+
+fonts: List[fontforge.font] = [
+    open(os.path.join(input_folder, font_name))
+    for font_name
+    in os.listdir(input_folder)  # All .ttf folders
+]
+
+for font in fonts:
+    for glyph in font:
+        font_relative_path: str = f"{font.fontname}\\"
+        if not os.path.exists(os.path.join(output_folder, font_relative_path)):
+            os.mkdir(os.path.join(output_folder, font_relative_path))
+        if font[glyph].isWorthOutputting():
+            glyph_file_name: str = font[glyph].glyphname + ".png"
+            try:
+                font[glyph].export(os.path.join(output_folder, font_relative_path, glyph_file_name))
+            except OSError:
+                continue
